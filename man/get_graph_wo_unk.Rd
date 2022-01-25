@@ -56,19 +56,22 @@ get_graph_wo_unk(orig_graph, met_wo_unk)
 ##--	or do  help(data=index)  for the standard data sets.
 
 ## The function is currently defined as
-function (orig_graph, met_wo_unk)
+
+function (orig_graph, ps.na)
 {
-    wo_unk_graph_l = list()
-    for (name in names(met_wo_unk)) {
-        print(name)
-        tax_level = name
-        wo_unk_graph <- igraph::delete_vertices(orig_graph, which(!names(V(orig_graph)) \%in\%
-            rownames(met_wo_unk[[tax_level]])))
-        print(wo_unk_graph)
-        wo_unk_graph_l[[name]] = wo_unk_graph
+    testlist <- c("Phylum", "Class", "Order", "Family", "Genus")
+    for (name in testlist){
+      tax_levl = name
+      taxa_info <- taxa.matrix(ps.na)
+      taxa_info <- as.data.frame(taxa_info)
+      tax<-tax_table(as.matrix(taxa_info[tax_level]))
+      new_phylo <-phyloseq(otu_table(ps.na), tax_table(tax))
+      wo_unk_graph <- igraph::delete_vertices(orig_graph, which(!names(V(orig_graph)) \%in\%
+                                                                  taxa_names(new_phylo)))
+    print(wo_unk_graph)
+    wo_unk_graph_l[[name]] = wo_unk_graph
     }
     return(wo_unk_graph_l)
-  }
 }
 % Add one or more standard keywords, see file 'KEYWORDS' in the
 % R documentation directory.
